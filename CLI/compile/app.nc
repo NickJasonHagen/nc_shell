@@ -1,3 +1,18 @@
+func useload(repo,update){
+    if instring(repo,"/") == false{
+        repo = cat("NickJasonHagen/nscript_",repo)
+    }
+
+    initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
+    if fileexists(initscript) == false || update == true{
+        reposplit = split(repo,"/")
+        dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
+        repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
+        dircreate(repopath)
+        runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+    }
+    return fileread(initscript)
+}
 if $cmdarg2 == "update"{
     update = true
 }
@@ -18,14 +33,14 @@ mainrsraw = cat($compilerdir,"src/main_raw.rs")
 myscriptdata = ""
 for xinclude in package.use{
     printraw("[Nscript builder]","m")
-    print("Reading nscript.package use-file: ",xinclude,"pink")  
+    print("Reading nscript.package use-file: ",xinclude,"pink")
     myscriptdata &= @lf useload(xinclude,update)
 }
 if len(package.includes) > 0{
     for xinclude in package.includes{
         printraw("[Nscript builder]","m")
-        print("Reading nscript.package include-file: ",xinclude,"pink")  
-        myscriptdata &= @lf fileread(cat(@scriptdir,xinclude)) 
+        print("Reading nscript.package include-file: ",xinclude,"pink")
+        myscriptdata &= @lf fileread(cat(@scriptdir,xinclude))
     }
 }
 

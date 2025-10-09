@@ -15,6 +15,14 @@ class webpage{
         replacebyref(site,"#CFG_TITLE#",server_config.title)
         replacebyref(site,"#CFG_INFO#",server_config.info)
         replacebyref(site,"#LIST#",menulist.load())
+        //userobj = *tag.userobject
+        if *tag.avatar == ""{
+            print("no avatar")
+            replacebyref(site,"#AVATAR#","images/layout_img/Dtafalonso-Ios8-Finder.256.png")
+        }
+        else{
+            replacebyref(site,"#AVATAR#",*tag.avatar)
+        }
         return site
     }
     //self.index = fileread("./system/template/main/indexraw.html")
@@ -199,7 +207,7 @@ class webui{
                         <div class="sidebar_user_info">
                             <div class="icon_setting"></div>
                             <div class="user_profle_side">
-                                <div class="user_img"><img class="img-responsive" src="images/layout_img/Dtafalonso-Ios8-Finder.256.png" alt="#" /></div>
+                                <div class="user_img"><img class="img-responsive" src="#AVATAR#" alt="#" /></div>
                                 <div class="user_info">
                                 <h6>#Username#</h6>
                                 </div>
@@ -248,7 +256,7 @@ class webui{
                                     </ul>
                                     <ul class="user_profile_dd">
                                         <li>
-                                            <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="images/layout_img/Dtafalonso-Ios8-Finder.256.png" alt="#" /><span class="name_user">#Username#</span></a>
+                                            <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="#AVATAR#" alt="#" /><span class="name_user">#Username#</span></a>
                                             <div class="dropdown-menu">
                                             <a class="dropdown-item" href="index.nc?#TAG#&usersettings&&&&" style="padding-right: 20px; margin-right: 10px;">Account settings</a>
                                             <a class="dropdown-item" href="index.nc?#TAG#&logout&&&"><span>Logout</span> <i class="fa fa-sign-out"></i></a>

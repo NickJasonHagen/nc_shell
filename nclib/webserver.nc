@@ -80,7 +80,7 @@ class server {
     self.port = 8080
     self.serverroot = @scriptdir
     self.webroot = server.serverroot
-    self.POSTbytesmax = 1024 * 1024// post datamax size
+    self.POSTbytesmax = 1024 * 21024 // post datamax size
     self.init()
 }
 

@@ -28,62 +28,15 @@ class ncapp {
     }
     self.appdir = cat(@nscriptpath,"/CLI/",self,"/")
 }
-
-class git{
-    func clone(url){
-        replacebyref(url,"https://github.com/","")
-        repo = url
-        if instring(url,"/") == false{
-            repo = cat("NickJasonHagen/nscript_",url)
-        }
-        url = cat("https://github.com/",repo)
-        reposplit = split(repo,"/")
-        dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
-        repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
-        dircreate(repopath)
-        print(repopath)
-        print(runwait(cat("git clone ",url," ",repopath)))
-    }
-    func get(url){
-         replacebyref(url,"https://github.com/","")
-        repo = url
-        if instring(url,"/") == false{
-            repo = cat("NickJasonHagen/nscript_",url)
-        }
-        url = cat("https://github.com/",repo)
-        reposplit = split(repo,"/")
-        dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
-        repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
-        dircreate(repopath)
-        print(repopath,"pink")
-        print(url,"p")
-        print(runwait(cat("git fetch ",url," ",repopath)))       
-    }
-    func pull(url){
-        replacebyref(url,"https://github.com/","")
-        repo = url
-        if instring(url,"/") == false{
-            repo = cat("NickJasonHagen/",url)
-        }
-        url = cat("https://github.com/",repo)
-        reposplit = split(repo,"/")
-        dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
-        repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
-        dircreate(repopath)
-        tmpbashfile = cat(@nscriptpath,"/tmp.sh")
-        print(repopath)
-        filewrite(tmpbashfile,cat("cd ",repopath," && git pull"))
-        print(runwait(cat("sh ",tmpbashfile)))     
-    }
-}
+// include function this loads code from git if the user doesnt have it ( or if update=true)
 func use(repo,update){
-    if instring(repo,"/") == false{  
+    if instring(repo,"/") == false{
         repo = cat("NickJasonHagen/nscript_",repo)
 
     }
-    
+
     initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
-    //print("https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc","b")
+    // retrieve code from git.
     if fileexists(initscript) == false || update == true{
         reposplit = split(repo,"/")
         dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
@@ -93,25 +46,8 @@ func use(repo,update){
     }
     init initscript
 }
-func useload(repo,update){
-    if instring(repo,"/") == false{  
-        repo = cat("NickJasonHagen/nscript_",repo)
 
-    }
-    
-    initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
-    //print("https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc","b")
-    if fileexists(initscript) == false || update == true{
-        reposplit = split(repo,"/")
-        dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
-        repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
-        dircreate(repopath)
-        runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
-    }
-    return fileread(initscript)
-}
-$ncshellversion = 1.004
-//rint(cat("Running nscript v",@nscriptversion," ncshell:",$ncshellversion," builtin:functions:",len(nscript::getrustfunctions())))
+$ncshellversion = 1.005
 check = $cmdarg1
 iets = match check{
     "testgit" =>{
@@ -136,5 +72,3 @@ iets = match check{
         init appfile
     }
 }
-
-//print("done!")
