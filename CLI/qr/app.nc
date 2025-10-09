@@ -1,0 +1,1 @@
+createqrcode(terminalinput("LinkforQRCode?"),terminalinput("filename?"))
