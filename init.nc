@@ -21,47 +21,98 @@ class os{
         self.architechture = runwait(shellcmd)
         return self.architechture[0]
     }
+    func cpu(){
+        res = runwait("lscpu | grep 'Model name' | cut -d: -f2 | sed 's/^ //'   ")
+        return trim(res[0])
+    }
 }
+
 class ncapp {
     func construct(){
         self.appdir = cat(@nscriptpath,"/CLI/",self,"/")
     }
     self.appdir = cat(@nscriptpath,"/CLI/",self,"/")
 }
-// include function this loads code from git if the user doesnt have it ( or if update=true)
-func use(repo,update){
-    if instring(repo,"/") == false{
+func loadrepo(repo,update){
+    if instring(repo,"/") == false{  
         repo = cat("NickJasonHagen/nscript_",repo)
-
     }
-
+    
     initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
-    // retrieve code from git.
     if fileexists(initscript) == false || update == true{
         reposplit = split(repo,"/")
         dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
         repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
         dircreate(repopath)
-        runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        return runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
     }
+}
+func use(repo,update){
+    loadrepo(repo,updat)
+    initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
     init initscript
 }
-
-$ncshellversion = 1.005
-check = $cmdarg1
-iets = match check{
-    "testgit" =>{
-        use("server")
+func install(repo){
+    res = loadrepo(repo,true)
+    print("installing nscript repo: ",repo,"by")
+    print(res[1])
+}
+$ncshellversion = 1.004 
+match $cmdarg1{
+    "install" =>{
+        install($cmdarg2)
     }
+    "update" =>{
+        if $cmdarg2 != "-y"{
+            check_repo = terminalinput("Update nscript dep repositories? y/n","n")
+            check_binary = terminalinput("Update Nscript runtime binary? y/n","n")
+        }
+        if check_repo == "y" || $cmdarg2 == "-y"{
+            print("_______________[Nscript updater]_______________")
+            for xdir in listdir(cat(@nscriptpath,"/git/")){
+                print("__[checking gitrepos for user ",xdir,"]__","bg")
+                for xrepo in listdir(cat(@nscriptpath,"/git/",xdir)){
+                    thisrepo = cat(xdir,xrepo)
+                    
+                    print("[Checking update] git:",thisrepo,"y")
+                    initscript = cat(@nscriptpath,"/git/",thisrepo,"/init.nc")
+                    gitinitscript = cat(@nscriptpath,"/git/",thisrepo,"/gitinit.nc")
+                    runwait(cat("curl https://raw.githubusercontent.com/",thisrepo,"/refs/heads/main/init.nc ","-o ",gitinitscript))
+                    readload = fileread(gitinitscript)
+                    if readload == "404: Not Found"{
+                        print("[Error] repo not found!","r")
+                    }
+                    else{
+                        if readload != "" && len(split(readload,@lf)) > 1{
+                            if readload != fileread(initscript){
+                                print("[Updated]","g")
+                                filewrite(initscript,readload)
+                            }
+                            
+                        }
+                    }
+                    filedelete(gitinitscript)
+
+                }
+            }
+        }
+        else{
+            print("Repos not updated.")
+        }
+        if check_binary == "y" || $cmdarg2 == "-y"{
+            run(cat("cd ",@nscriptpath," && sh ./update.sh"))
+        }
+        else{
+            print("Binary not updated.")
+        }
+        
+    }
+        
     "run" =>{
         init $cmdarg2
     }
     "version" =>{
-        printraw("NCshell version:","by")
-
-        print($ncshellversion,"bg")
-        printraw("Nscript version:","by")
-        print(@nscriptversion,"green")
+        print("Nscript version:",@nscriptversion,@lf," ncshell:",$ncshellversion,@lf," builtin:Rustfunctions:",len(nscript::getrustfunctions()),"by")
     }
     "conf" =>{
         run(cat("code ",@nscriptpath))
@@ -72,3 +123,5 @@ iets = match check{
         init appfile
     }
 }
+
+//print("done!")
