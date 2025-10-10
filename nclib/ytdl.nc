@@ -5,6 +5,3 @@ class ytdl{
     }
 }
 
-
-// test werkt :P
-//ytdl.download("https://www.youtube.com/watch?v=6twHgHjHUek","./Altiyan_Childs_masonary_expose.mp4")
