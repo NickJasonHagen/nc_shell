@@ -26,7 +26,7 @@ nscript compile
 ## Examples and source
 for examples on nscript ( and integrating nscript into your rust project) see:
 - https://github.com/NickJasonHagen/nscriptv3_bin
-for the sourcecode of the nscript interpreter see
+<br>for the sourcecode of the nscript interpreter see
 - https://github.com/NickJasonHagen/nscriptv3_lib
 ## Compiler
 WIP:currently only working for Linux (unix)<br><br>
