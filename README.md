@@ -23,6 +23,11 @@ nscript run ./somescript.nc
 # compile a script into a single binary (unix only)
 nscript compile
 ```
+## Examples and source
+for examples on nscript ( and integrating nscript into your rust project) see:
+- https://github.com/NickJasonHagen/nscriptv3_bin
+for the sourcecode of the nscript interpreter see
+- https://github.com/NickJasonHagen/nscriptv3_lib
 ## Compiler
 WIP:currently only working for Linux (unix)<br><br>
 Nscript is a runtime interpreted script engine built in Rust.<br>
@@ -44,4 +49,6 @@ deprecated<br>
 as nscript is still in development before the git system was in, it used nclib to hold shared scripts. this will be going out sometime.
 
 
-
+### Contact ?
+Like to get in touch ? 
+find me on discord @skormaka
