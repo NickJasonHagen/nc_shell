@@ -64,15 +64,27 @@ filewrite(mainrs,sourcedata)
 
 printraw("[Rust Compiler]","bb")
 print("Start compiling the rust binary","pink")
-path = runwait("pwd")
-cline = cat(
-    "cd ",$compilerdir,
-    " && RUSTFLAGS='-C opt-level=3' cargo build --release",
-    " && mv ",$compilerdir,"target/release/",projectname,
-    " ",path[0],"/",projectname,
-    " && cd ",path[0],"/",projectname,
-    "&& chmod +x ./",projectname
-)
+if @OS == "Unix"{
+    path = runwait("pwd")
+    cline = cat(
+        "cd ",$compilerdir,
+        " && RUSTFLAGS='-C opt-level=3' cargo build --release",
+        " && mv ",$compilerdir,"target/release/",projectname,
+        " ",path[0],"/",projectname,
+        " && cd ",path[0],"/",projectname,
+        "&& chmod +x ./",projectname
+    )
+
+}
+else{
+    path = runwait("echo %CD%")
+    compilebat = fileread(cat(@nscriptpath,"/tmpcompile.bat"))
+    replacebyref(compilebat,"#COMPILEDPATH#",$compilerdir)
+    replacebyref(compilebat,"#SCRIPTDIR#",path[0])
+    replacebyref(compilebat,"#APP#",projectname)   
+    filewrite(cat(@nscriptpath,"/compile.bat"),compilebat)
+    cline = cat(@nscriptpath,"/compile.bat")
+}
 
 //print(cline,"bb")
 res = runwait(cline)
