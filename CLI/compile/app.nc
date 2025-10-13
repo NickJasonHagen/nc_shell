@@ -9,7 +9,12 @@ func useload(repo,update){
         dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
         repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
         dircreate(repopath)
-        runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        if @OS == "Unix"{
+            runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        }
+        else{
+            runwait(cat("curl.exe https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        }
     }
     return fileread(initscript)
 }

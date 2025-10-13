@@ -44,7 +44,12 @@ func loadrepo(repo,update){
         dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
         repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
         dircreate(repopath)
-        return runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        if @OS == "Unix"{
+            return runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        }
+        else{
+            return runwait(cat("curl.exe https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+        }
     }
 }
 func use(repo,update){
