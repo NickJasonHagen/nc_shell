@@ -79,7 +79,7 @@ if @OS == "Unix"{
 else{
     path = runwait("echo %CD%")
     compilebat = fileread(cat(@nscriptpath,"/tmpcompile.bat"))
-    replacebyref(compilebat,"#COMPILEDPATH#",$compilerdir)
+    replacebyref(compilebat,"#COMPILEPATH#",$compilerdir)
     replacebyref(compilebat,"#SCRIPTDIR#",path[0])
     replacebyref(compilebat,"#APP#",projectname)   
     filewrite(cat(@nscriptpath,"/compile.bat"),compilebat)
