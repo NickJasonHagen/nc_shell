@@ -146,7 +146,7 @@ class rawhtml{
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>2Switch Computerhok Systeem</title>
+                <title>#TITLE#</title>
                 <!-- Bootstrap CSS -->
                 <link href="bootstrap.min.css" rel="stylesheet">
                 <style>
@@ -218,8 +218,9 @@ class rawhtml{
                     <div class="login-header">
                         <h2>#CFG_NAME#</h2>
                         <p class="portal-text">#CFG_INFO#</p>
+                        <p class="portal-text">#LOGINMSG#</p>
                     </div>
-                    #LOGINMSG#
+                    
                     <form id="loginForm" method="POST" action="/index.nc?weblogin&#param3#&#param4#&">
                         <div class="mb-3">
                             <label for="loginId" class="form-label text-light">Login ID</label>
@@ -292,6 +293,13 @@ class htmlform{
 
                 background-color:rgb(35, 34, 34);
                 color: rgb(202, 202, 202);
+                box-shadow: 0 4px 8px rgba(87, 98, 110, 0.1);
+                
+            }
+            .form-control-white {
+
+                background-color:rgba(247, 241, 241, 1);
+                color: rgba(8, 8, 8, 1);
                 box-shadow: 0 4px 8px rgba(87, 98, 110, 0.1);
                 
             }

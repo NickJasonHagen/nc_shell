@@ -1,7 +1,6 @@
-
-  echo Copying this directory to ~\nscript, this will be your \nscript shared environment!
-  copy /r ./ %USERPROFILE%\nscript
-  cd /d %USERPROFILE%\~\nscript
+  echo nscript requires windows users to have Rust (cargo) installed, 
+  echo with shell you need to use setx NSCRIPT_PATH=%USERPROFILE%\nscript\ if "nscrip version" doesnt show a version.
+  cd /d %USERPROFILE%\nscript
   echo Building nscript with cargo
   cargo build --release
   mkdir %USERPROFILE%\programs

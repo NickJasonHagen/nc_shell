@@ -5,7 +5,7 @@ class config{
 class webpage{
     func replacetags(site,tag){
         site = replace(site,"#TAG#",tag)
-        replacebyref(site,"#Username#",*tag.name)
+        replacebyref(site,"#Username#",*tag.username)
         replacebyref(site,"#PARAM2#",$param2)
         replacebyref(site,"#PARAM3#",$param3)
         replacebyref(site,"#PARAM4#",$param4)
@@ -14,7 +14,10 @@ class webpage{
         replacebyref(site,"#CFG_NAME#",server_config.name)
         replacebyref(site,"#CFG_TITLE#",server_config.title)
         replacebyref(site,"#CFG_INFO#",server_config.info)
-        replacebyref(site,"#LIST#",menulist.load())
+        replacebyref(site,"#PAGETITLE#",page.pagetitle)
+        replacebyref(site,"#MAINNAME#",*tag.modulename)
+        replacebyref(site,"#sitetitle#",page.title)
+        replacebyref(site,"#LIST#",menulist.load(tag))
         //userobj = *tag.userobject
         if *tag.avatar == ""{
             print("no avatar")
@@ -25,29 +28,30 @@ class webpage{
         }
         return site
     }
+    func includejs(scriptdata){
+        $includejs = arraypush($includejs,scriptdata)
+    }
     //self.index = fileread("./system/template/main/indexraw.html")
     self.login = fileread("./system/template/main/login.html")
 }
 class menulist{
-    func load(){
+    func load(tag){
         list = ""
         for xitem in object::index("moduleregister"){
             //print(cat("loaded module list ",xitem),"bm")
-            list = cat list *xitem.getlist()
+            list = cat list *xitem.getlist(tag)
         }
         return list
     }
 }
 class module{
-    
+    func getall(){
+        return object::index("moduleregister")
+    }
     func construct(){
         pageindex = cat "modulepageindex_" self
         object::delete(pageindex) // clear all data first
         moduleregister.*self = self
-        //object::delete(cat("modulepageindex_",self))
-        //print(cat("constructing ->",self),"g")
-
-
     }
     func destruct(){
         object::deleteproperty("moduleregister",self)
@@ -74,19 +78,26 @@ class module{
     func setlist(listhtml){
         self.menulist = listhtml
     }
-    func getlist(){
-        if self.moduletype == "admin" {
-            if usertag.checkadmin($param1) == true {
+    func getlist(tag){
+        if tag == "" {return}
+        // if self.moduletype == "admin" {
+        //     if usertag.checkadmin(tag) == true {
+        //         self.createlist()
+        //     }
+        //     else{
+        //         return ""
+        //     }
+        // }
+        // else{
+            if usertag.checkrole(tag,*tag.roles,arraypush(self.roles,self)) == true {
+                //print("checkedrole :",self," granted for user",*tag.username,"g")
                 self.createlist()
             }
             else{
+                //print("checkedrole :",self," declined for user",*tag.username,"g")
                 return ""
-            }
-            
-        }
-        else{
-            self.createlist()
-        }
+            }           
+        // }
 
         return self.menulist
     }
@@ -97,13 +108,25 @@ class module{
         
         object::delete("tmplist")
         tmplist : list
-        tmplist.new(self,self.icon,self.iconcolor)
+        if self.modulename != ""{
+            tmplist.new(self.modulename,self.icon,self.iconcolor)
+        }
+        else{
+            tmplist.new(self,self.icon,self.iconcolor)       
+        }
+
         functions = object::functions(self)
         all = arraysearch(functions,"page_")
         for xpage in all{
-            xpage = replace(xpage,"page_","")
-            tmplist.item(xpage,cat("index.nc?",$param1,"&module&",self,"&",xpage,"&&&&"))
+            xpage2 = replace(xpage,"page_","")
+            if self.*xpage != ""{
+                tmplist.item(self.*xpage,cat("index.nc?",$param1,"&module&",self,"&",xpage2,"&&&&"))
+            }
+            else{
+                tmplist.item(xpage2,cat("index.nc?",$param1,"&module&",self,"&",xpage2,"&&&&"))
+            }
         }
+
         tmplist.build()
         self.menulist = tmplist.html()
     }
@@ -114,8 +137,8 @@ class module{
 }
 class server_config{
     self.name = "test"
-    self.title = "Nscript CMS"
-    self.info = "nscript cms system dev"
+    self.title = "Nscript"
+    self.info = "nscript"
 }
 
 class webui{
@@ -179,11 +202,11 @@ class webui{
             <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-           
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
             <![endif]-->
             #HEADER#
         </head>
-
+        <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
         <style>
         .listitemsstyle:hover {
             background:rgb(83, 83, 104);
@@ -220,7 +243,6 @@ class webui{
                             <li class="active">
 
                                 #LIST#
-                                #ADMINMENU#
                                 </li>
                         </ul>
                     </div>
@@ -245,15 +267,7 @@ class webui{
                                 <div class="right_topbar">
 
                                 <div class="icon_info">
-                                    <ul class="user_profile_dd">
-                                        <li>
-                                            <a class="dropdown-toggle" data-toggle="dropdown"> <span class="name_user">Test menu</span></a>
-                                            <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="index.nc?#TAG#&usersettings&&&&" style="padding-right: 20px; margin-right: 10px;">Account settings</a>
-                                            <a class="dropdown-item" href="index.nc?#TAG#&logout&&&"><span>Logout</span> <i class="fa fa-sign-out"></i></a>
-                                            </div>
-                                        </li>
-                                    </ul>
+
                                     <ul class="user_profile_dd">
                                         <li>
                                             <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="#AVATAR#" alt="#" /><span class="name_user">#Username#</span></a>

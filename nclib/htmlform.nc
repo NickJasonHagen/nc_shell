@@ -74,6 +74,7 @@ class form{
         self.innerdata = replace(self.innerdata,"#LABEL#",label)
         self.innerdata = replace(self.innerdata,"#VALUE#",value)
     }
+
     //color input field
     func colorpicker(id,label,value,require){
         self.innerdata = cat self.innerdata replace(htmlform.color,"#IID#",id)

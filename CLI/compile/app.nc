@@ -1,9 +1,11 @@
 func useload(repo,update){
-    if instring(repo,"/") == false{
+    if instring(repo,"/") == false{  
         repo = cat("NickJasonHagen/nscript_",repo)
-    }
 
+    }
+    
     initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
+    //print("https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc","b")
     if fileexists(initscript) == false || update == true{
         reposplit = split(repo,"/")
         dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
@@ -18,6 +20,7 @@ func useload(repo,update){
     }
     return fileread(initscript)
 }
+
 if $cmdarg2 == "update"{
     update = true
 }
@@ -32,20 +35,20 @@ projectname = package.name
 $compilerdir = cat(@nscriptpath,"/nscript_compiler/")
 //projectname = terminalinput("Projectname:","nscriptapp")
 printraw("[Nscript compiler]","b")
-print("Reading nscript.package name : ",projectname,"pink")
+print("Reading nscript.package name : ",projectname,"by")
 mainrs = cat($compilerdir,"src/main.rs")
 mainrsraw = cat($compilerdir,"src/main_raw.rs")
 myscriptdata = ""
 for xinclude in package.use{
     printraw("[Nscript builder]","m")
-    print("Reading nscript.package use-file: ",xinclude,"pink")
+    print("Reading nscript.package use-file: ",xinclude,"by")  
     myscriptdata &= @lf useload(xinclude,update)
 }
 if len(package.includes) > 0{
     for xinclude in package.includes{
         printraw("[Nscript builder]","m")
-        print("Reading nscript.package include-file: ",xinclude,"pink")
-        myscriptdata &= @lf fileread(cat(@scriptdir,xinclude))
+        print("Reading nscript.package include-file: ",xinclude,"by")  
+        myscriptdata &= @lf fileread(cat(@scriptdir,xinclude)) 
     }
 }
 
@@ -53,7 +56,7 @@ if len(package.includes) > 0{
 sourcedata = fileread(mainrsraw)
 
 printraw("[Nscript builder]","m")
-print("Building project : ",projectname,"pink")
+print("Building project : ",projectname,"by")
 cargofileraw = cat($compilerdir,"CargoRaw.toml")
 cargofile = cat($compilerdir,"Cargo.toml")
 replacebyref(sourcedata,"#NSCRIPTHEXCODE#",stringtohex(myscriptdata))
@@ -63,7 +66,9 @@ filewrite(cargofile,cargodata)
 filewrite(mainrs,sourcedata)
 
 printraw("[Rust Compiler]","bb")
-print("Start compiling the rust binary","pink")
+print("Start compiling the rust binary","by")
+
+// for Unix machines
 if @OS == "Unix"{
     path = runwait("pwd")
     cline = cat(
@@ -74,19 +79,19 @@ if @OS == "Unix"{
         " && cd ",path[0],"/",projectname,
         "&& chmod +x ./",projectname
     )
-
 }
+// for windows machines
 else{
-    path = runwait("echo %CD%")
-    compilebat = fileread(cat(@nscriptpath,"/tmpcompile.bat"))
-    replacebyref(compilebat,"#COMPILEPATH#",$compilerdir)
-    replacebyref(compilebat,"#SCRIPTDIR#",path[0])
-    replacebyref(compilebat,"#APP#",projectname)   
-    filewrite(cat(@nscriptpath,"/compile.bat"),compilebat)
-    cline = cat(@nscriptpath,"/compile.bat")
+    path = runwait("cd /d %CD%")
+    cline = cat(
+        "cd ",$compilerdir,
+        @lf," && cargo build --release",
+        " && move ",$compilerdir,"target/release/",projectname,".exe",
+        " ",path[0],"/",projectname,".exe",
+        " && cd ",path[0],"/",projectname
+    )
 }
 
-//print(cline,"bb")
 res = runwait(cline)
 if instring(res,"Finished `release") == true{
     printraw("[Nscript Compiler]","b")

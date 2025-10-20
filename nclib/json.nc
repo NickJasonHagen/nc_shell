@@ -24,9 +24,7 @@ class json{
     }
 
 }
-// iets : json
-
-// iets.json_set("aap","mooi!").json_remove("aap").json_set("kont","ook mooi!").json_set("ja joh","oke dan!!!!")
-
-// iets.json_get("kont") !
-// print(iets.json_to_string(),"bp")
+//iets : json
+//iets.json_set("aap","mooi!").json_remove("aap").json_set("kont","ook mooi!").json_set("ja joh","oke dan!!!!")
+//iets.json_get("kont") !
+//print(iets.json_to_string(),"bp")

@@ -25,6 +25,28 @@ class html{
     func span(html){
         return cat("<span>",html,"</span>")
     }
+    func icon(icon){
+        return cat("<i class=\"fa fa-",icon,"\"></i>")
+    }
+    func search(posturl,info){  
+        html = #raw
+        <form id="loginForm" method="POST" action="#URL#">
+            <div style="max-width: 320px;">
+            <div class="input-group shadow-sm">
+                <input type="text" class="form-control" placeholder="#INFO#" id="text" name="text" aria-label="Search"
+                style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                <button class="btn btn-outline-success" type="submit"
+                style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                <i class="fas fa-search"></i>
+                </button>
+            </div>
+            </div>
+        </form>
+        #endraw
+        replacebyref(html,"#URL#",posturl)
+        replacebyref(html,"#INFO#",info)
+        html
+    }
 }
 class list{
     func new(name,icon,color){
@@ -79,8 +101,18 @@ class api{
         //*api : api // copy for oncall()
         return self
     }
+    // url as a string
     func link(param1,param2,param3){
         ret = cat "index.nc?#TAG#&api&" self.apikey "&" param1  "&" param2  "&" param3
+        return ret
+    }
+    // full html link element
+    func htmllink(name,param1,param2,param3){
+        ret = html.link(cat("index.nc?#TAG#&api&",self.apikey,"&",param1,"&",param2,"&",param3),name)
+        return ret
+    }
+    func button(name,param1,param2,param3){
+        ret = html.button(name,cat("index.nc?#TAG#&api&",self.apikey,"&",param1,"&",param2,"&",param3))
         return ret
     }
     func oncall(){
@@ -321,6 +353,17 @@ class html{
                 </div>
         #endraw
         return replace(ret,"#PERCENTAGE#",percentage)
+    }
+    func msg(textmsg,colorset){
+        text2 = cat "<div class=" @quote "alert alert-primary" @quote " style=" @quote "font-size: 20px; font-weight: bold;" @quote" role=" @quote "alert" @quote ">" textmsg "</div>"
+        if colorset == "red"{
+            text2 = cat "<div class=" @quote "alert alert-danger" @quote " style=" @quote "font-size: 20px; font-weight: bold;" @quote" role=" @quote "alert" @quote ">" textmsg "</div>"
+        }
+        if colorset == "green"{
+            text2 = cat "<div class=" @quote "alert alert-success" @quote " style=" @quote "font-size: 20px; font-weight: bold;" @quote" role=" @quote "alert" @quote ">" textmsg "</div>"
+        }
+        //msg = replace(self.raw,"#MAIN#",text2)
+        return text2
     }
 }
 class table{
