@@ -34,10 +34,10 @@ class ncapp {
     self.appdir = cat(@nscriptpath,"/CLI/",self,"/")
 }
 func loadrepo(repo,update){
-    if instring(repo,"/") == false{  
+    if instring(repo,"/") == false{
         repo = cat("NickJasonHagen/nscript_",repo)
     }
-    
+
     initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
     if fileexists(initscript) == false || update == true{
         reposplit = split(repo,"/")
@@ -62,7 +62,7 @@ func install(repo){
     print("installing nscript repo: ",repo,"by")
     print(res[1])
 }
-$ncshellversion = 1.007 
+$ncshellversion = 1.007
 match $cmdarg1{
     "install" =>{
         install($cmdarg2)
@@ -78,7 +78,6 @@ match $cmdarg1{
                 print("__[checking gitrepos for user ",xdir,"]__","bg")
                 for xrepo in listdir(cat(@nscriptpath,"/git/",xdir)){
                     thisrepo = cat(xdir,xrepo)
-                    
                     print("[Checking update] git:",thisrepo,"y")
                     initscript = cat(@nscriptpath,"/git/",thisrepo,"/init.nc")
                     gitinitscript = cat(@nscriptpath,"/git/",thisrepo,"/gitinit.nc")
@@ -93,11 +92,9 @@ match $cmdarg1{
                                 print("[Updated]","g")
                                 filewrite(initscript,readload)
                             }
-                            
                         }
                     }
                     filedelete(gitinitscript)
-
                 }
             }
         }
@@ -110,9 +107,7 @@ match $cmdarg1{
         else{
             print("Binary not updated.")
         }
-        
     }
-        
     "run" =>{
         init $cmdarg2
     }
@@ -128,5 +123,3 @@ match $cmdarg1{
         init appfile
     }
 }
-
-//print("done!")
