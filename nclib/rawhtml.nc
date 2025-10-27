@@ -233,6 +233,133 @@ class rawhtml{
 
                         <button type="submit" class="btn btn-login w-100 mb-3">Login</button>
                     </form>
+                     <a type="submit" href="/index.nc?new&createnew&&&&" ><i>create new</i></a>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Check if loginId is stored and pre-fill it
+                        const storedLoginId = localStorage.getItem('loginId');
+                        if (storedLoginId) {
+                            document.getElementById('loginId').value = storedLoginId;
+                            document.getElementById('rememberMe').checked = true;
+                        }
+                    });
+
+                    function handleLogin(event) {
+                        const rememberMe = document.getElementById('rememberMe').checked;
+
+                        if (rememberMe) {
+                            const loginId = document.getElementById('loginId').value;
+                            localStorage.setItem('loginId', loginId); // Save loginId in localStorage
+                        } else {
+                            localStorage.removeItem('loginId'); // Remove loginId if "Remember Me" is not checked
+                        }
+                    }
+                </script>
+            </body>
+            </html>
+
+#endraw
+        self.createnewaccount = #raw
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>#TITLE#</title>
+                <!-- Bootstrap CSS -->
+                <link href="bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body {
+                        background: #2c2e32;
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 20px;
+                    }
+                    .login-container {
+                        background: #1f2021;
+                        padding: 3rem;
+                        border-radius: 20px;
+                        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+                        width: 100%;
+                        max-width: 450px;
+                        border: 1px solid #34495e;
+                    }
+                    .login-header {
+                        text-align: center;
+                        margin-bottom: 2.5rem;
+                        color: #ecf0f1;
+                    }
+                    .login-header h2 {
+                        font-size: 2rem;
+                        font-weight: 700;
+                        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    }
+                    .login-header .portal-text {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        color: #3498db;
+                        letter-spacing: 1px;
+                        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                    }
+                    .form-control {
+                        background: #484b4e;
+                        border: none;
+                        color: #ecf0f1;
+                        padding: 0.75rem;
+                    }
+                    .form-control:focus {
+                        background: #6d6e6f;
+                        color: #ecf0f1;
+                        border-color: #7c8285;
+                        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+                    }
+                    .form-control::placeholder {
+                        color: #95a5a6;
+                    }
+                    .btn-login {
+                        background: #495156;
+                        border: none;
+                        padding: 0.75rem;
+                        transition: all 0.3s ease;
+                        font-weight: 600;
+                    }
+                    .btn-login:hover {
+                        background: #586f7f;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="login-container">
+                    <div class="login-header">
+                        <h2>#CFG_NAME#</h2>
+                        <p class="portal-text">#CFG_INFO#</p>
+                        <p class="portal-text">#LOGINMSG#</p>
+                    </div>
+                    
+                    <form id="loginForm" method="POST" action="/index.nc?createnew&#param3#&#param4#&">
+                        <div class="mb-3">
+                            <label for="loginId" class="form-label text-light">Login ID</label>
+                            <input type="text" class="form-control" id="loginId" name="loginId" placeholder="Enter Login ID" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label text-light">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
+                        </div>
+                      <div class="mb-3">
+                            <label for="password2" class="form-label text-light">re-enter Password</label>
+                            <input type="password2" class="form-control" id="password2" name="password2" placeholder="Re-Enter Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="invitecode" class="form-label text-light">InviteCode ( see discord)</label>
+                            <input type="text" class="form-control" id="creationtag" name="invitecode" placeholder="XXXXXX" required>
+                        </div>
+                        <button type="submit" class="btn btn-login w-100 mb-3">Login</button>
+                    </form>
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
