@@ -5,6 +5,7 @@ class server{
     // you can redeclare it later under server class
     func onconnect(clientIP){
         $userip = cat("ip:",clientIP)
+        printraw("server.onconnect(ip)->","grey")
         print($userip,"g")
         print($domainname,"y") // prints the users reached by dns
         print($request,"grey") // prints the users reached by dns
@@ -13,7 +14,7 @@ class server{
         // }
     }
     // postdata handler for non json regular posts
-    // creates a object for ease of use 
+    // creates a object for ease of use
     func handlepost(){
         object::delete("POSTDATA")
         POSTDATA : "POSTDATA"
@@ -30,7 +31,7 @@ class server{
         }
         else{
             prop = decode_html_url(splitselect($POSTDATA,"=",0))
-            POSTDATA.*prop = decode_html_url(splitselect($POSTDATA,"=",1)) 
+            POSTDATA.*prop = decode_html_url(splitselect($POSTDATA,"=",1))
         }
     }
     func start(){
@@ -79,7 +80,7 @@ class server{
             dircreate(server.serverroot)
             filewrite(indexnc,"return \"helloworld!\"")
         }
-        // allows the user to update 
+        // allows the user to update
         coroutine "webserverpostloader" {
             server.start()
             break self
@@ -90,8 +91,11 @@ class server{
     // on linux these port 80 is restrictedmode
     // use: sudo setcap CAP_NET_BIND_SERVICE=+eip /path/to/binary
     self.port = 8080
+
+    // bellow are internally used props,they are required!
     self.serverroot = cat(@scriptdir,"/public/")
     self.webroot = server.serverroot
     self.POSTbytesmax = 1024 * 21024 // post datamax size
+
     self.init().throttle(5)
 }

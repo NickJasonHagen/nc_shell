@@ -75,6 +75,7 @@ class form{
         self.innerdata = replace(self.innerdata,"#VALUE#",value)
     }
 
+
     //color input field
     func colorpicker(id,label,value,require){
         self.innerdata = cat self.innerdata replace(htmlform.color,"#IID#",id)
@@ -87,7 +88,7 @@ class form{
         self.innerdata = replace(self.innerdata,"#LABEL#",label)
         self.innerdata = replace(self.innerdata,"#VALUE#",value)
     }
-    //email validation field
+    //email validation field  <input type="hidden" name="static_field" value="This is a static string">
     func email(id,label,value,require){
         self.innerdata = cat self.innerdata replace(htmlform.email,"#IID#",id)
         if require == "true"{
@@ -98,6 +99,15 @@ class form{
         }
         self.innerdata = replace(self.innerdata,"#LABEL#",label)
         self.innerdata = replace(self.innerdata,"#VALUE#",value)
+    }
+    //email validation field  
+    func static(id,value){
+        html = #raw
+            <input type="hidden" name="static_field" id="#ID#" value="#VALUE#">
+        #endraw
+        replacebyref(html,"#ID#",id)
+        replacebyref(html,"#VALUE#",value)
+        self.innerdata = cat self.innerdata html
     }
     //fileboxfield
     func file(id,label,value,require){

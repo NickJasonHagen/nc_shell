@@ -340,8 +340,8 @@ class rawhtml{
                         <p class="portal-text">#CFG_INFO#</p>
                         <p class="portal-text">#LOGINMSG#</p>
                     </div>
-                    
-                    <form id="loginForm" method="POST" action="/index.nc?createnew&#param3#&#param4#&">
+                    #VALIDATION#
+                    <form id="loginForm" method="POST" action="/index.nc?postcreatenew&#param3#&#param4#&">
                         <div class="mb-3">
                             <label for="loginId" class="form-label text-light">Login ID</label>
                             <input type="text" class="form-control" id="loginId" name="loginId" placeholder="Enter Login ID" required>
@@ -352,11 +352,11 @@ class rawhtml{
                         </div>
                       <div class="mb-3">
                             <label for="password2" class="form-label text-light">re-enter Password</label>
-                            <input type="password2" class="form-control" id="password2" name="password2" placeholder="Re-Enter Password" required>
+                            <input type="password" class="form-control" id="password2" name="password2" placeholder="Re-Enter Password" required>
                         </div>
                         <div class="mb-3">
-                            <label for="invitecode" class="form-label text-light">InviteCode ( see discord)</label>
-                            <input type="text" class="form-control" id="creationtag" name="invitecode" placeholder="XXXXXX" required>
+                            <label for="invitecode" class="form-label text-light">validationcode ( see discord #validationcode)</label>
+                            <input type="text" class="form-control" id="validationtag" name="validationtag" placeholder="XXXXXX" required>
                         </div>
                         <button type="submit" class="btn btn-login w-100 mb-3">Login</button>
                     </form>
@@ -412,7 +412,7 @@ class htmlform{
                 padding: 20px;
                 background-color:rgb(42, 42, 42);
                 color: rgb(202, 202, 202);
-            border: 1px solidrgb(67, 91, 114);
+                border: 1px solidrgb(67, 91, 114);
                 border-radius: 10px;
                 box-shadow: 0 6px 10px rgba(58, 50, 207, 0.1);
             }
@@ -444,6 +444,30 @@ class htmlform{
             .form-control:autofill {
                 color:rgb(252, 255, 255);
                 background:rgb(65, 68, 71);
+            }
+
+            .list-group-item {
+                background-color:rgb(35, 34, 34);
+                color: rgb(202, 202, 202);
+                box-shadow: 0 4px 8px rgba(87, 98, 110, 0.1);
+            }
+            .list-group-item {
+
+                background-color:rgb(35, 34, 34);
+                color: rgb(202, 202, 202);
+                box-shadow: 0 4px 8px rgba(87, 98, 110, 0.1);
+                
+            }
+            .list-group-item:hover{
+                background:rgb(47, 55, 61);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            }
+            .list-group-item :focus{
+                background:rgb(65, 68, 71);
+                color: #ecf0f1;
+                border-color:rgb(111, 165, 192);
+                box-shadow: 0 0 0 0.2rem rgba(83, 179, 242, 0.25);
             }
             </style>
             <div class="custom-form-container">
@@ -533,10 +557,20 @@ class htmlform{
             </div>
         #endraw
         // checkbox html
-        self.checkbox = #raw
+        self.checkboxold = #raw
             <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="#IID#" name="#IID#" checked="#VALUE#"  #REQUIRED# >
+            <input type="checkbox" class="form-check-input flex-shrink-0" id="#IID#" name="#IID#" checked="#VALUE#"  #REQUIRED# >
             <label class="form-check-label" for="checkbox">#LABEL#</label>
+            </div>
+        #endraw
+        self.checkbox = #raw
+            <div class="form-check"> 
+            <label class="list-group-item d-flex gap-2">
+            <input class="form-check-input flex-shrink-0" type="checkbox" value="" id="#IID#" name="#IID#" checked="#VALUE#"  #REQUIRED#> 
+            <span>
+            #LABEL#
+            </span> 
+            </label> 
             </div>
         #endraw
         self.label = #raw
@@ -546,22 +580,4 @@ class htmlform{
         #endraw
     }
     self.load()
-}
-class icons{
-    self.printer = #raw 
-        <i class="fa fa-print"> </i>
-     #endraw
-    self.check = #raw 
-        <i class="fa fa-check"> </i>
-    #endraw
-    self.cross = #raw 
-        <i class="fa fa-times"> </i>
-    #endraw
-
-}
-func icon(name){
-    ico = #raw 
-        <i class="fa fa-#ID#"> </i>
-    #endraw  
-    return replace(ico,"#ID#",name)
 }

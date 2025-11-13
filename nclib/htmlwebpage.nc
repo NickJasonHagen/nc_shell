@@ -144,7 +144,10 @@ class server_config{
 class webui{
     // include to head
     func include(html){
-        self.includes = arraypush(self.includes,html)
+        if arraycontains(self.includes,html) == false{
+            self.includes = arraypush(self.includes,html)
+        }
+
     }
     func show(content){
         head = ""
@@ -157,6 +160,14 @@ class webui{
         //print(head,"m") !
         replacebyref(page,"#HEADER#",head)
         replacebyref(page,"#MAIN#",content)
+        modalbugstring = "<div class=\"modal-backdrop fade show\"></div>"
+        if instring(page,modalbugstring) == true{
+            fixpage = split(page,modalbugstring)
+            last = len(fixpage) - 1
+            page = cat(fixpage[0],modalbugstring,fixpage[last])
+
+        }
+
         //object::deleteproperty(self,"includes")
         self.includes = @new
         return page

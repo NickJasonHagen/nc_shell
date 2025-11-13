@@ -6,6 +6,48 @@ class inc{
     include("json.nc")
     include("htmlwebpage.nc")
 }
+class icons{
+    func from(name){
+        this = #raw 
+        <i class="fa fa-#NAME#"> </i>
+     #endraw
+     return replace(this,"#NAME#",name)
+    }
+    self.printer = #raw 
+        <i class="fa fa-print"> </i>
+     #endraw
+    self.check = #raw 
+        <i class="fa fa-check"> </i>
+    #endraw
+    self.cross = #raw 
+        <i class="fa fa-times"> </i>
+    #endraw
+    self.download = #raw 
+        <i class="fa fa-times"> </i>
+    #endraw
+}
+
+class exbase64{ // consumed by thread awaits.async
+    func externbase64(base,ftype,fname,filedir){
+        fname = replace(fname,"\\","/")
+        splitname = split(fname,"/")
+        len = len(splitname) - 1
+        if len > 0{
+            fname = splitname[len]
+        }
+        typesplit = split(fname,".")
+        last = len(typesplit) - 1
+        type = cat(".",typesplit[last])
+        newname = cat(stringtoeval(replace(fname,type,"")),type)
+        return base64tofile(base,cat(@scriptdir,filedir,"/",newname))
+    }
+    func doneexternbase64(ret){
+        print("[base64:fileupload] ",ret,"by")
+    }
+}
+class ok{
+    self.result = "success"
+}
 class html{
     func autoclick(url){
         return replace(rawhtml.auto,"#URL#",url)
@@ -28,6 +70,40 @@ class html{
     func icon(icon){
         return cat("<i class=\"fa fa-",icon,"\"></i>")
     }
+    func video(url,width,height,autoplay){
+        raw = #raw
+            <video controls width="#WIDTH#" height="#HEIGHT#" #AUTO#>
+            <source src="#LINK#" type="video/mp4">
+            Your browser does not support the video element.
+            </video>
+        #endraw
+        replacebyref(raw,"#LINK#",url)
+        replacebyref(raw,"#WIDTH#",width)
+        replacebyref(raw,"#HEIGHT#",height)
+        if autoplay == true{
+            replacebyref(raw,"#AUTO#","autoplay")
+        }
+        else{
+            replacebyref(raw,"#AUTO#","")
+        }
+        raw    
+    }
+    func audio(url,autoplay){
+        raw = #raw
+            <audio controls #AUTO#>
+            <source src="#LINK#" type="audio/mpeg">
+            Your browser does not support the audio element.
+            </audio>
+        #endraw
+        replacebyref(raw,"#LINK#",url)
+        if autoplay == true{
+            replacebyref(raw,"#AUTO#","autoplay")
+        }
+        else{
+            replacebyref(raw,"#AUTO#","")
+        }
+        raw    
+    }
     func search(posturl,info){  
         html = #raw
         <form id="loginForm" method="POST" action="#URL#">
@@ -47,6 +123,189 @@ class html{
         replacebyref(html,"#INFO#",info)
         html
     }
+    func input(posturl,info,buttonname){
+     string_or(buttonname,"submit")
+        html = #raw
+        <form id="loginForm" method="POST" action="#URL#">
+            <div style="max-width: 320px;">
+            <div class="input-group shadow-sm">
+                <input type="text" class="form-control" placeholder="#INFO#" id="text" name="text" aria-label="Search"
+                style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                <button class="btn btn-outline-success" type="submit"
+                style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                #BUTTON#
+                </button>
+            </div>
+            </div>
+        </form>
+        #endraw
+        replacebyref(html,"#URL#",posturl)
+        replacebyref(html,"#INFO#",info)
+        replacebyref(html,"#BUTTON#",buttonname)
+        html
+    }
+    func spinner(id,color1,color2,size,thickness,borderradius){
+        raw = #raw
+        <style>
+        ##ID#loading {
+        display: inline-block;
+        width: #SIZE#px;
+        height: #SIZE#px;
+        border: #THICKNESS#px solid #COLOR2#;
+        border-radius: #BORDER#%;
+        border-top-color: #COLOR1#;
+        animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+        }
+        </style>
+        <div id="#ID#loading"></div>
+        #endraw
+        replacebyref(raw,"#ID#",id)
+        replacebyref(raw,"#COLOR1#",string_or(color1," #636161ff"))
+        replacebyref(raw,"#COLOR2#",string_or(color2," #313131"))
+        replacebyref(raw,"#SIZE#",int_or(size,20))
+        replacebyref(raw,"#THICKNESS#",int_or(thickness,5))
+        replacebyref(raw,"#BORDER#",int_or(borderradius,50))
+        raw
+    }
+   func bas64filehandler(path,fname){
+        ftype = stringbetween($POSTDATA,"/",";base64")
+        base = split($POSTDATA,"base64,")
+        base = splitselect(base[1],"\"",0)
+        if fname == ""{
+            fname = stringbetween($POSTDATA,"fname\":\"","\"")
+        }
+        $POSTDATA = "" // reset that blob of global data..
+        awaits.async("exbase64.externbase64","exbase64.doneexternbase64",trim(base),ftype,fname,path)
+        return object::tojson("ok")
+   }
+   func base64fileupload(id,webentree,arg1,arg2,arg3,arg4,arg5,arg6){
+    if instring(webentree,"?") == true{
+        posturl = webentree
+    }
+    else{
+        posturl = cat(webentree,"?",arg1,"&",arg2,"&",arg3,"&",arg4,"&",arg5,"&",arg6,"&")
+    }
+    
+        // if filetypes == ""{
+        //     filetypes = ".jpg, .jpeg, .png, .gif, .pdf, .zip"
+        // }
+
+        content = #raw
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+        .base64fileupload {
+            background: #1f2021;
+            padding: 3rem;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            max-width: 400px;
+            border: 1px solid #34495e;
+        }
+        .base64fileupload-control {
+            background: #484b4e;
+            border-radius: 10px;
+            border: 1px solid #34495e;
+            color: #ecf0f1;
+            width: 100%;
+            padding: 15;
+        }
+        .base64fileupload-controldark {
+            background: #1f2021;
+            border-radius: 10px;
+            border: 1px solid #5b5f62ff;
+            color: #ecf0f1;
+            width: 100%;
+            padding: 15;
+        }
+        .base64fileupload-control:focus {
+            background: #6d6e6f;
+            color: #ecf0f1;
+            border-color: #7c8285;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        .base64fileupload-control::placeholder {
+            color: #95a5a6;
+        }
+        .btn-base64fileupload {
+            background: #287616ff;
+            border-radius: 10px;
+            color: #ecf0f1;
+            border: none;
+            padding: 15;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+        }
+        .btn-base64fileupload:hover {
+            background: #76dd59ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        .base64fileupload-control:hover {
+            background: #586f7f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        </style>
+        <div class="base64fileupload">
+    <div id="#ID#pulsebox" class="base64fileupload-controldark">Select a file and enter a filename to start uploading.</div>
+    <div><input type="file"  class="base64fileupload-control" id="#ID#myfile"></input></div>
+    <div><button id="#ID#myButton" class="btn btn-base64fileupload">Upload</button></div>
+   </div>
+    
+    <script>
+          // Example POST method implementation:
+          async function #ID#postData(url = '', data = {}) {
+		//myfilename = ('#myfilename');
+            // Default options are marked with *
+            const #ID#response = await fetch(url, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            
+            return #ID#response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        const #ID#toBase64 = #ID#file => new Promise((resolve, reject) => {
+            const #ID#reader = new FileReader();
+            #ID#reader.readAsDataURL(#ID#file);
+            #ID#reader.onload = () => resolve(#ID#reader.result);
+            #ID#reader.onerror = #ID#error => reject(#ID#error);
+        });
+        
+        document.getElementById('#ID#myButton').addEventListener('click', async () => {
+            const #ID#file = document.querySelector('##ID#myfile').files[0];
+            document.getElementById('#ID#pulsebox').innerHTML = "Encoding with Base64";
+            var #ID#myfilename = document.getElementById('#ID#myfile').value;
+            const #ID#baseString = await #ID#toBase64(#ID#file);
+            document.getElementById('#ID#pulsebox').innerHTML = "Uploading!!";
+            #ID#postData('#POSTURL#', { fname:#ID#myfilename,data: #ID#baseString}).then(#ID#response => document.getElementById('#ID#pulsebox').innerHTML ='Upload Succesfull');
+        });
+
+        </script>
+        #endraw
+        replacebyref(content,"#POSTURL#",posturl)
+        //replacebyref(content,"#BSLINK#",bslink)
+        replacebyref(content,"#ID#",id)
+        content
+    }
+
 }
 class list{
     func new(name,icon,color){
@@ -103,7 +362,7 @@ class api{
     }
     // url as a string
     func link(param1,param2,param3){
-        ret = cat "index.nc?#TAG#&api&" self.apikey "&" param1  "&" param2  "&" param3
+        ret = cat "index.nc?#TAG#&api&" self.apikey "&" param1 "&" param2 "&" param3
         return ret
     }
     // full html link element
@@ -119,8 +378,8 @@ class api{
         //default ,overwrite for custom behaviour
 
     }
-
-}
+    self.requirelogin = true
+ }
 class js{
     func createbutton(id,name,url,icon,ref){
         if icon == ""{
@@ -194,20 +453,156 @@ class html{
         replacebyref(ret,"#CONTENT#",innerdata)
         ret
     }
+    func jumbotron(title,text,buttonname,url){
+        raw = #raw
+                <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+          <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">#TITLE#</h1>
+            <p class="col-md-8 fs-4">
+                #TEXT#
+            </p>
+            <a href="#URL#">
+            <button class="btn btn-primary btn-lg" type="button">
+              #BUTTON#
+            </button></a>
+          </div>
+        </div>
+        #endraw
+        replacebyref(raw,"#TITLE#",title)
+        replacebyref(raw,"#TEXT#",text)
+        replacebyref(raw,"#BUTTON#",buttonname)
+        replacebyref(raw,"#URL#",url)
+        raw
+    }
+    func rowitemsstretched(itemsvec){
+        raw = #raw 
+        <div class="row align-items-md-stretch">
+        #endraw
+        data = string xitem in itemsvec{
+            xitem
+        }
+        return cat(raw,data,"</div>")
+    }
+    func rowitems(itemsvec){
+        raw = #raw 
+            <div class="row">
+        #endraw
+        data = string xitem in itemsvec{
+            xitem
+        }
+        return cat(raw,data,"</div></div>")
+    }
+    func card(innerdata,color,hovercolor){
+        raw = #raw 
+            <style>
+                .account-card {
+                background-color: #COLOR#;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 20px;
+                }
+                .account-card:hover {
+                background-color: #HOVERCOLOR#;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(29, 28, 28, 0.1);
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 20px;
+                }
+
+            </style>
+            <div class="col-md-4">
+            <div class = "account-card">
+                #CARD#
+            </div>
+            </div>
+      #endraw
+
+        thisdiv = stringtohex(@now)
+        color = string_or(color," #a9a6a6ff")
+        hovercolor = string_or(hovercolor," #e2e2e2ff")
+        replacebyref(raw,"#COLOR#",color)
+        replacebyref(raw,"#HOVERCOLOR#",hovercolor)
+        return replace(raw,"#CARD#",innerdata)
+    }
+
+    func accountcard(username,info,buttonname,url,color,hovercolor){
+        raw = #raw 
+        <style>
+            .account-card {
+                background-color: #COLOR#;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .account-card:hover {
+                background-color: #HOVERCOLOR#;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(29, 28, 28, 0.1);
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            </style>
+            <!-- Gebruiker 1 -->
+            <div class="col-md-4">
+                <div class="account-card">
+                <i class="fas fa-user-circle account-icon"></i>
+                <h4 class="font-weight-bold">Naam: <span class="text-primary">#USERNAME#</span></h4>
+                <p>Rol: <span class="badge badge-danger">#INFO#</span></p>
+                <a href="#URL#" class="btn btn-primary mt-3">#BUTTON#</a>
+                </div>
+            </div>
+      #endraw
+        thisdiv = stringtohex(@now)
+        color = string_or(color," #a9a6a6ff")
+        hovercolor = string_or(hovercolor," #e2e2e2ff")
+        replacebyref(raw,"#COLOR#",string_or(color," #a9a6a6ff"))
+        replacebyref(raw,"#HOVERCOLOR#",string_or(hovercolor," #e2e2e2ff"))
+        replacebyref(raw,"#INFO#",string_or(info,"no info."))
+        replacebyref(raw,"#BUTTON#",string_or(buttonname,"View"))
+        replacebyref(raw,"#URL#",string_or(url,"#"))
+        return replace(raw,"#USERNAME#",username)
+
+    }
+    func jumbotronsmall(title,text,buttonname,url){
+        raw = #raw
+          <div class="col-md-6">
+            <div class="h-100 p-5 bg-body-tertiary border rounded-3">
+              <h2>#TITLE#</h2>
+              <p>
+                #TEXT#
+              </p>
+              <button class="btn btn-outline-secondary" type="button">
+                #BUTTON#
+              </button>
+            </div>
+          </div>
+        #endraw
+        replacebyref(raw,"#TITLE#",title)
+        replacebyref(raw,"#TEXT#",text)
+        replacebyref(raw,"#BUTTON#",buttonname)
+        replacebyref(raw,"#URL#",url)
+        raw
+    }
     func modal(button,title,text,fwbutton,url){
         ret = #raw 
 
             <!-- Button trigger modal -->
-            <button type="button" id="myInput" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+            <button type="button" id="#ID#myInput" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="##ID#myModal">
             #BUTTON#
             </button>
 
             <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="#ID#myModal" tabindex="-1" aria-labelledby="#ID#myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="myModalLabel">#TITLE#</h1>
+                    <h1 class="modal-title fs-5" id="#ID#myModalLabel">#TITLE#</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -224,11 +619,11 @@ class html{
             </div>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
             <script>
-            const myModal = document.getElementById('myModal')
-            const myInput = document.getElementById('myInput')
+            const #ID#myModal = document.getElementById('#ID#myModal')
+            const #ID#myInput = document.getElementById('#ID#myInput')
 
-            myModal.addEventListener('shown.bs.modal', () => {
-            myInput.focus()
+            #ID#myModal.addEventListener('shown.bs.modal', () => {
+            #ID#myInput.focus()
             })
             </script>
          #endraw
@@ -237,6 +632,7 @@ class html{
         replacebyref(ret,"#FWBUTTON#",fwbutton)
         replacebyref(ret,"#BUTTON#",button)
         replacebyref(ret,"#URL#",url)
+        replacebyref(ret,"#ID#",cat("md",lowercase(stringtohex(cat(url,@now,random(0,100,0))))))
         ret
     }
     func badge(text,color){
@@ -367,7 +763,7 @@ class html{
     }
 }
 class table{
-    func createtable(id,itemsarray,colortext,colorbk){
+    func createtable(id,itemsarray,colortext,colorbk,innercolor,innerbkcolor){
         tmp = #raw 
             <style>
             .custom-buttons {
@@ -378,6 +774,15 @@ class table{
                 gap: 5px;
             }
             .custom-form-tablecontainer {
+                max-width: 900px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color:#COLORBK2#;
+                color: #COLOR2#;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            .table {
                 max-width: 900px;
                 margin: 20px auto;
                 padding: 20px;
@@ -397,20 +802,22 @@ class table{
         if colorbk = ""{
             colorbk = " rgb(22, 21, 21)"
          }
-         if theme == ""{
-            theme = "thead-dark"
-         }
+        //  if theme == ""{
+        //     theme = "thead-dark"
+        //  }
          tmp = cat tmp "<table class=" @quote "table table-striped" @quote ">" id " <thead><tr>" 
         for item in itemsarray{
             if item != "" {
-                tmp = cat tmp @lf "<th>" item "</th>"
+                tmp = cat tmp @lf "<th >" item "</th>"
             }
         }
         
         tmp = cat tmp @lf "</tr></thead><tbody>"
         replacebyref(tmp,"#COLOR#",colortext)
         replacebyref(tmp,"#COLORBK#",colorbk)
-        replacebyref(tmp,"#STRIPED#",striped)
+        replacebyref(tmp,"#COLOR2#",innercolor)
+        replacebyref(tmp,"#COLORBK2#",innerbkcolor)
+        //replacebyref(tmp,"#STRIPED#",striped)
         return tmp
     }
 
@@ -473,4 +880,12 @@ class htmlbase64{
         }
         <script>
     #endraw
+}
+
+
+func icon(name){
+    ico = #raw 
+        <i class="fa fa-#ID#"> </i>
+    #endraw  
+    return replace(ico,"#ID#",name)
 }
