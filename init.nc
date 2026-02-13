@@ -67,6 +67,9 @@ match $cmdarg1{
     "install" =>{
         install($cmdarg2)
     }
+    "path" =>{
+        print(@nscriptpath)
+    }
     "update" =>{
         if $cmdarg2 != "-y"{
             check_repo = terminalinput("Update nscript dep repositories? y/n","n")
