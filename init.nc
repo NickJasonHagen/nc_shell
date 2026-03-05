@@ -62,7 +62,7 @@ func install(repo){
     print("installing nscript repo: ",repo,"by")
     print(res[1])
 }
-$ncshellversion = 1.007
+$ncshellversion = 1.008
 match $cmdarg1{
     "install" =>{
         install($cmdarg2)
