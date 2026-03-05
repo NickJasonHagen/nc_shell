@@ -28,15 +28,59 @@ filecopy(
 // }
 packstr = #raw
     
-    class package{
-
-        self.name = "#PKGNAME#"
-        self.includes = [
-            "init.nc"
-        ]
-        //array for git rep use
-        self.use = []
+class package{
+    func load(){
+        for xscript in self.includes{
+            if xscript != "init.nc"{
+                init xscript
+            }
+        } 
+        for xrepo in self.use{
+                self.use(xrepo,false)
+        }
+        return "loaded!"
     }
+    func loadrepo(repo,update){
+        if instring(repo,"/") == false{
+            repo = cat("NickJasonHagen/nscript_",repo)
+        }
+
+        initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
+        if fileexists(initscript) == false || update == true{
+            reposplit = split(repo,"/")
+            dircreate(cat(@nscriptpath,"/git/",reposplit[0]))
+            repopath = cat(@nscriptpath,"/git/",reposplit[0],"/",reposplit[1])
+            dircreate(repopath)
+            if @OS == "Unix"{
+                return runwait(cat("curl https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+            }
+            else{
+                return runwait(cat("curl.exe https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc ","-o ",initscript))
+            }
+        }
+        repo
+    }
+    func use(repo,update){
+        repo = self.loadrepo(repo,update)
+        initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
+        init initscript
+        initscript
+    }
+    // compiler/runtime:
+    // all .includes and .use will be included in the binary upon compilation. 
+    self.name = "testnc"
+    // will be included on compilation
+    // add your project includes here 
+    self.includes = [
+        "init.nc"
+    ]
+    //array for git rep use, will also be included in compilation
+    // gituser/nscript_reponame
+    //(if no slash is given, it will automaticly forward it to git:nickjasonhagen/nscript_GIVENREPO)
+    self.use = [
+        ""
+    ]
+}
 #endraw
 replacebyref(packstr,"#PKGNAME#",$packagename)
 pkfile = cat(@scriptdir,"/package.nc")
@@ -51,7 +95,16 @@ else{
 initfile = cat(@scriptdir,"/init.nc")
 if fileexists(initfile) == false{
     print("created a init.nc file.")
-    filewrite(initfile,"print(\"helloworld!\")")
+    initscript = #raw
+    class runtime{
+        if fileexists("package.nc") == true{
+            nscript::parsefile("package.nc")
+            package.load()
+        }
+    }
+    print("helloworld","green")
+    #endraw
+    filewrite(initfile,initscript)
 }
 else{
     print("init.nc exists! ready.","g")
