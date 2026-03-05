@@ -6,12 +6,12 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 .   "$HOME/.cargo/env"
 cd ./setup/nscript && RUSTFLAGS='-C opt-level=3' cargo build --release
 #be assured to have the user/bin
-mkdir ~/.local
-mkdir ~/.local/bin
-echo copying the executable binary to ~/.local/bin/nscript 
+#mkdir ~/.local
+#mkdir ~/.local/bin
+echo copying the executable binary to /bin/nscript
 cd ../..
-rm ~/.local/bin/nscript 
-mv ./setup/nscript/target/release/nscript -u ~/.local/bin/nscript 
-chmod +x ~/.local/bin/nscript
-
+rm ~/.local/bin/nscript
+mv ./setup/nscript/target/release/nscript -u /bin/nscript
+chmod +x /bin/nscript
+nscript version
 echo done
