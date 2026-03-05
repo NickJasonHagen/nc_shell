@@ -80,7 +80,7 @@ timer = timerinit()
         print("[Test2] Passed!","g")
     }
     else{
-        print("[Test2] failed!","r")
+        print("[Test2] failed! res=",s," req=",238897,"r")
     }
     print(cat("test2 50k stringcat-grow:",timerdiff(timer)),"b")
 
