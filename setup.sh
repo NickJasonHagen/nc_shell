@@ -10,8 +10,8 @@ cd ./setup/nscript && RUSTFLAGS='-C opt-level=3' cargo build --release
 #mkdir ~/.local/bin
 echo copying the executable binary to /bin/nscript
 cd ../..
-rm ~/.local/bin/nscript
-mv ./setup/nscript/target/release/nscript -u /bin/nscript
-chmod +x /bin/nscript
+sudo rm /bin/nscript
+sudo mv ./setup/nscript/target/release/nscript -u /bin/nscript
+sudo chmod +x /bin/nscript
 nscript version
 echo done
