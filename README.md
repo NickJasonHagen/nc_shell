@@ -7,6 +7,10 @@ export NSCRIPT_PATH=/your/path
 ```
 The @nscriptpath macro in nscript links to this env var.
 
+## CLI install
+git clone https://github.com/NickJasonHagen/nc_shell && cd nc_shell && sh setup.sh
+
+
 ## what does it do?
 The envoirement is used for various CLI tools.<br>
 In your binary you can execute the /init.nc from your envoirement while remaining in your workingdir.<br>
@@ -50,5 +54,5 @@ as nscript is still in development before the git system was in, it used nclib t
 
 
 ### Contact ?
-Like to get in touch ? 
+Like to get in touch ?
 find me on discord @skormaka
