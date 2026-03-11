@@ -64,11 +64,9 @@ func updateshell(){
     updatescript = fileread(update)
     if updatescript != "404: Not Found"{
         filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
-        version = stringbetween(updatescript,"ncshellversion = ","//")
-        //version = split(updatescript,"ncshellversion = ")
-        //version = split(version[1],@lf)
-        
-        print("shell updated ",version,"g")
+        version = split(updatescript,"ncshellversion = ")
+        version = split(version[1],"//")
+        print("shell updated ",version[0],"g")
     }
     else{
         print("Error connecting to github")
