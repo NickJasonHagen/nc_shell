@@ -61,7 +61,7 @@ func updateshell(){
              runwait(cat("curl.exe https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/init.nc -o ",update))
         }
         updatescript = fileread(update)
-        if updatescript != "404: Not Found"{{
+        if updatescript != "404: Not Found"{
             filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
         }
 }
