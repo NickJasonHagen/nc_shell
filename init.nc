@@ -67,6 +67,10 @@ match $cmdarg1{
     "install" =>{
         install($cmdarg2)
     }
+    "enable-server" =>{
+        res = runwait("sudo setcap CAP_NET_BIND_SERVICE=+eip /bin/nscript","")
+        print("set",res[0],"r")
+    }
     "path" =>{
         print(@nscriptpath)
     }
