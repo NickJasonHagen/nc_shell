@@ -20,14 +20,9 @@ thread awaits{
      if $ready == ""{
          $ready = true
      }
-    closethreadtimer = timerinit()
      //isnt used, but gotta stay active not to exit the thread before synced back
     coroutine "thread" each 1000{
-        if timerdiff(closethreadtimer) > 999{
-            break self
-        }
-        //this thread returns "" when bussy ,so it wont holdup the mainthread.
-        //keep it alive so the mainthread can check it, and send it exit to close when callback is called.
+        break self
     }
 }
 class awaits{
@@ -53,7 +48,6 @@ class awaits{
                 break self
             }
         }
-        return thisthread
     }
     func callback(function,req,onclass,onclassfunc){
         if onclass == ""{
