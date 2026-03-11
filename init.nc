@@ -13,7 +13,7 @@ class nscript{
     func listinclude(){
         dl = print(httpget(self.mainnet,80,"/listinclude.nc"),"bp")
     }
-    self.mainnet = "85.148.230.249"
+    self.mainnet = "0.0.0.0"
 }
 class os{
     func arch(){
@@ -63,6 +63,10 @@ func updateshell(){
         updatescript = fileread(update)
         if updatescript != "404: Not Found"{
             filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
+            print("shell updated ",stringbetween(updatescript,"$ncshellversion = ",@lf))
+        }
+        else{
+            print("Error connecting to github")
         }
 }
 func use(repo,update){
@@ -75,7 +79,7 @@ func install(repo){
     print("installing nscript repo: ",repo,"by")
     print(res[1])
 }
-$ncshellversion = 1.009
+$ncshellversion = 1.010
 match $cmdarg1{
     "install" =>{
         install($cmdarg2)
