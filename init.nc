@@ -54,20 +54,20 @@ func loadrepo(repo,update){
 }
 func updateshell(){
     update = cat(@nscriptpath,"/initu.nc")
-        if @OS == "Unix"{
-             runwait(cat("curl https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/init.nc -o ",update))
-        }
-        else{
-             runwait(cat("curl.exe https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/init.nc -o ",update))
-        }
-        updatescript = fileread(update)
-        if updatescript != "404: Not Found"{
-            filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
-            print("shell updated ",stringbetween(updatescript,"$ncshellversion = ",@lf),"g")
-        }
-        else{
-            print("Error connecting to github")
-        }
+    if @OS == "Unix"{
+        runwait(cat("curl https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/initu.nc -o ",update))
+    }
+    else{
+        runwait(cat("curl.exe https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/initu.nc -o ",update))
+    }
+    updatescript = fileread(update)
+    if updatescript != "404: Not Found"{
+        filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
+        print("shell updated ",stringbetween(updatescript,"$ncshellversion = ",@lf),"g")
+    }
+    else{
+        print("Error connecting to github")
+    }
 }
 func use(repo,update){
     loadrepo(repo,updat)
