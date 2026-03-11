@@ -64,7 +64,10 @@ func updateshell(){
     if updatescript != "404: Not Found"{
         filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
         version = stringbetween(updatescript,"ncshellversion = ",@lf)
-        print("shell updated ",version,"g")
+        version = split(updatescript,"ncshellversion = ")
+        version = split(version[1],@lf)
+        
+        print("shell updated ",version[0],"g")
     }
     else{
         print("Error connecting to github")
@@ -80,7 +83,7 @@ func install(repo){
     print("installing nscript repo: ",repo,"by")
     print(res[1])
 }
-$ncshellversion = 1.011
+$ncshellversion = 1.012
 match $cmdarg1{
     "install" =>{
         install($cmdarg2)
