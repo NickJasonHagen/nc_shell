@@ -52,6 +52,19 @@ func loadrepo(repo,update){
         }
     }
 }
+func updateshell(){
+    update = cat(@nscriptpath,"/initu.nc")
+        if @OS == "Unix"{
+             runwait(cat("curl https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/init.nc -o ",update))
+        }
+        else{
+             runwait(cat("curl.exe https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/init.nc -o ",update))
+        }
+        updatescript = fileread(update)
+        if updatescript != "404: Not Found"{{
+            filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
+        }
+}
 func use(repo,update){
     loadrepo(repo,updat)
     initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
@@ -62,7 +75,7 @@ func install(repo){
     print("installing nscript repo: ",repo,"by")
     print(res[1])
 }
-$ncshellversion = 1.008
+$ncshellversion = 1.009
 match $cmdarg1{
     "install" =>{
         install($cmdarg2)
@@ -78,6 +91,7 @@ match $cmdarg1{
         if $cmdarg2 != "-y"{
             check_repo = terminalinput("Update nscript dep repositories? y/n","n")
             check_binary = terminalinput("Update Nscript runtime binary? y/n","n")
+            check_shell = terminalinput("Update Nscript shell script? y/n","n")
         }
         if check_repo == "y" || $cmdarg2 == "-y"{
             print("_______________[Nscript updater]_______________")
@@ -107,6 +121,9 @@ match $cmdarg1{
         }
         else{
             print("Repos not updated.")
+        }
+        if check_shell == "y" || $cmdarg2 = "-y"{
+            updateshell()
         }
         if check_binary == "y" || $cmdarg2 == "-y"{
             run(cat("cd ",@nscriptpath," && sh ./update.sh"))
