@@ -55,15 +55,16 @@ func loadrepo(repo,update){
 func updateshell(){
     update = cat(@nscriptpath,"/initu.nc")
     if @OS == "Unix"{
-        runwait(cat("curl https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/initu.nc -o ",update))
+        runwait(cat("curl https://raw.githubusercontent.com/NickJasonHagen/nc_shell/refs/heads/main/init.nc -o ",update))
     }
     else{
-        runwait(cat("curl.exe https://raw.githubusercontent.com/NickJasonHagen/ncshell/refs/heads/main/initu.nc -o ",update))
+        runwait(cat("curl.exe https://raw.githubusercontent.com/NickJasonHagen/nc_shell/refs/heads/main/init.nc -o ",update))
     }
     updatescript = fileread(update)
     if updatescript != "404: Not Found"{
         filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
-        print("shell updated ",stringbetween(updatescript,"$ncshellversion = ",@lf),"g")
+        version = stringbetween(updatescript,"ncshellversion = ",@lf)
+        print("shell updated ",version,"g")
     }
     else{
         print("Error connecting to github")
@@ -79,7 +80,7 @@ func install(repo){
     print("installing nscript repo: ",repo,"by")
     print(res[1])
 }
-$ncshellversion = 1.010
+$ncshellversion = 1.011
 match $cmdarg1{
     "install" =>{
         install($cmdarg2)
