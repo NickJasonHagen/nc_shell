@@ -64,6 +64,7 @@ func updateshell(){
     updatescript = fileread(update)
     if updatescript != "404: Not Found"{
         filewrite(cat(@nscriptpath,"/init.nc"),updatescript)
+        //!! actual version number has to be above this function , as its reading this code file raw!!
         version = split(updatescript,"ncshellversion = ")
         version = split(version[1],"//")
         print("shell updated ",version[0],"g")

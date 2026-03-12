@@ -7,7 +7,7 @@ export NSCRIPT_PATH=/your/path
 ```
 The @nscriptpath macro in nscript links to this env var.
 
-## CLI install
+# CLI install ( mint / ubuntu / debian)
 git clone https://github.com/NickJasonHagen/nc_shell && cd nc_shell && sh setup.sh
 
 
