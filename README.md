@@ -26,6 +26,12 @@ nscript init
 nscript run ./somescript.nc
 # compile a script into a single binary (unix only)
 nscript compile
+# get all built in functions
+nscript help
+#updater
+nscript update
+#benchmark
+nscript benchmark
 ```
 ## Examples and source
 for examples on nscript ( and integrating nscript into your rust project) see:
