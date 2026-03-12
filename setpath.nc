@@ -1,5 +1,5 @@
 user = runwait("whoami")
-path = cat("export NSCRIPT_PATH=/home/",user,"/nscript")
-bashrc = cat("/home/",user,"/.bashrc")
+path = cat("export NSCRIPT_PATH=/home/",user[0],"/nscript")
+bashrc = cat("/home/",user[0],"/.bashrc")
 njh::save("#nscript path",path,bashrc)
 print("Nscript path ",path,"g")
