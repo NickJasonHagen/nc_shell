@@ -13,6 +13,6 @@ cd ../..
 sudo rm /bin/nscript
 sudo mv ./setup/nscript/target/release/nscript -u /bin/nscript
 sudo chmod +x /bin/nscript
-/bin/nscript home/skorm/nscript/setpath.nc
+/bin/nscript home/$USER/nscript/setpath.nc
 nscript version
 echo done
