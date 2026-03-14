@@ -1,9 +1,9 @@
 func useload(repo,update){
-    if instring(repo,"/") == false{  
+    if instring(repo,"/") == false{
         repo = cat("NickJasonHagen/nscript_",repo)
 
     }
-    
+
     initscript = cat(@nscriptpath,"/git/",repo,"/init.nc")
     //print("https://raw.githubusercontent.com/",repo,"/refs/heads/main/init.nc","b")
     if fileexists(initscript) == false || update == true{
@@ -41,14 +41,14 @@ mainrsraw = cat($compilerdir,"src/main_raw.rs")
 myscriptdata = ""
 for xinclude in package.use{
     printraw("[Nscript builder]","m")
-    print("Reading nscript.package use-file: ",xinclude,"by")  
+    print("Reading nscript.package use-file: ",xinclude,"by")
     myscriptdata &= @lf useload(xinclude,update)
 }
 if len(package.includes) > 0{
     for xinclude in package.includes{
         printraw("[Nscript builder]","m")
-        print("Reading nscript.package include-file: ",xinclude,"by")  
-        myscriptdata &= @lf fileread(cat(@scriptdir,xinclude)) 
+        print("Reading nscript.package include-file: ",xinclude,"by")
+        myscriptdata &= @lf fileread(cat(@scriptdir,xinclude))
     }
 }
 
@@ -64,7 +64,7 @@ cargodata = fileread(cargofileraw)
 replacebyref(cargodata,"#NAME#",projectname)
 filewrite(cargofile,cargodata)
 filewrite(mainrs,sourcedata)
-
+filewrite(cat("./",projectname,"buildscript.nc"),myscriptdata)
 printraw("[Rust Compiler]","bb")
 print("Start compiling the rust binary","by")
 
