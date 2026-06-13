@@ -20,7 +20,7 @@ pub fn main() {
     loop {
         if nscript.coroutinesindex.len() > 0 {
             // coroutines all run once then the function returns here.
-            nscript.executecoroutines();
+            nscript.mainloop();
         }else{
             break;
         }
