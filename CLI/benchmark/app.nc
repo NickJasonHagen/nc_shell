@@ -168,6 +168,16 @@ if cat("c=",c("kaaaaaaaaaaaaaaaaaaaaaaas")) == "c=fin=kaaaaaaaaaaaaaaaaaaaaaaas"
 }
 print(cat("test7: 10k match:",timerdiff(timer)),"b")
 res = cat("c=",c("kaaaaaaaaaaaaaaaaaaaaaaas"))
+
+
+
+
+
+
+
+
+// Scripts per second test. simple stuff no cap. 
+
 func tester(x){
     return cat("got",x," with version:aa")
 }

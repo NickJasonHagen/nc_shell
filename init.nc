@@ -140,9 +140,9 @@ match $cmdarg1{
             print("Binary not updated.")
         }
     }
-    "run" =>{
-        init $cmdarg2
-    }
+    // "run" =>{
+    //     init $cmdarg2
+    // }
     "version" =>{
         print("Nscript version:",@nscriptversion,@lf," ncshell:",$ncshellversion,@lf," builtin:Rustfunctions:",len(nscript::getrustfunctions()),"by")
     }

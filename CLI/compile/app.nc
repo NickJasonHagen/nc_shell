@@ -73,7 +73,7 @@ if @OS == "Unix"{
     path = runwait("pwd")
     cline = cat(
         "cd ",$compilerdir,
-        " && RUSTFLAGS='-C opt-level=3' cargo build --release",
+        "&& cargo update && RUSTFLAGS='-C opt-level=3' cargo build --release",
         " && mv ",$compilerdir,"target/release/",projectname,
         " ",path[0],"/",projectname,
         " && cd ",path[0],"/",projectname,
@@ -85,7 +85,7 @@ else{
     path = runwait("cd /d %CD%")
     cline = cat(
         "cd ",$compilerdir,
-        @lf," && cargo build --release",
+        @lf,"&& cargo update && cargo build --release",
         " && move ",$compilerdir,"target/release/",projectname,".exe",
         " ",path[0],"/",projectname,".exe",
         " && cd ",path[0],"/",projectname
